@@ -7,13 +7,15 @@ export default StyleSheet.create({
     borderColor: '#cccccc',
     borderRadius: 4,
     alignItems: 'center',
-    height: 29,
+    minHeight: 29,
     backgroundColor: '#ffffff',
     marginBottom: 10,
     zIndex: 9999,
+    flexWrap: 'wrap',
   },
   inputWrapper: { // INPUT AND LIST WRAPPER
     flex: 1,
+    minWidth: 230,
   },
   input: { // TEXTINPUT
     outline: 'none',

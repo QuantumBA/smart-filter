@@ -13,25 +13,43 @@ export default class List extends Component {
     isMouseHovering: false,
     highlightedItem: '',
     filter: {},
+    data: [],
+  }
+
+  componentWillMount() {
+    const { listDataSource } = this.props
+    this.setState({ data: Object.keys(listDataSource) })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('willRecProps', this.props.listDataSource, this.state.filter.type)
+    if (nextProps.isFilterTypeDefined && nextProps.isFilterTypeDefined !== this.props.isFilterTypeDefined) {
+      this.setState({ data: this.props.listDataSource[this.state.filter.type] })
+    }
   }
 
   _onPress = (currentItem) => {
     const {
       emitFilter,
       isFilterTypeDefined,
-      searchKey,
       setFilterTypeDefinedStatus,
     } = this.props
 
     if (isFilterTypeDefined) {
       console.log('filtro ya definido!')
       this.setState({
-        filter: { ...this.state.filter, keyword: currentItem[searchKey] },
-      }, () => emitFilter(this.state.filter))
+        filter: { ...this.state.filter, keyword: currentItem },
+      }, () => {
+        const filter = { [this.state.filter.type]: this.state.filter.keyword }
+        console.log('emitFilter!', filter)
+        emitFilter(filter)
+      })
     } else {
       console.log('definiendo tipo de filtro...')
-      setFilterTypeDefinedStatus(true)
-      this.setState({ filter: { ...this.state.filter, type: currentItem[searchKey] } })
+      this.setState(
+        { filter: { ...this.state.filter, type: currentItem } },
+        () => setFilterTypeDefinedStatus(true),
+      )
     }
 
   }
@@ -49,27 +67,27 @@ export default class List extends Component {
   _renderItem = ({ ...listItem }) => (
     <TouchableOpacity
       onPress={() => this._onPress(listItem.item)}
-      style={[styles.listRowContainer, this.props.listRowStyle, this.state.highlightedItem === listItem.item[this.props.searchKey] && this.state.isMouseHovering && styles.listRowContainerHover]}
-      onMouseEnter={() => { this.setState({ isMouseHovering: true, highlightedItem: listItem.item[this.props.searchKey] }) }}
+      style={[styles.listRowContainer, this.props.listRowStyle, this.state.highlightedItem === listItem.item && this.state.isMouseHovering && styles.listRowContainerHover]}
+      onMouseEnter={() => { this.setState({ isMouseHovering: true, highlightedItem: listItem.item }) }}
       onMouseLeave={() => this.setState({ isMouseHovering: false, highlightedItem: '' })}
     >
       <Text
-        style={[styles.listRowText, this.props.listRowTextStyle, this.state.highlightedItem === listItem.item[this.props.searchKey] && this.state.isMouseHovering && styles.listRowTextHover]}
+        style={[styles.listRowText, this.props.listRowTextStyle, this.state.highlightedItem === listItem.item && this.state.isMouseHovering && styles.listRowTextHover]}
       >
-        { listItem && listItem.item[this.props.searchKey] ? listItem.item[this.props.searchKey] : 'hello there'}
+        { listItem && listItem.item ? listItem.item : '<empty>'}
       </Text>
     </TouchableOpacity>
   )
 
   render() {
     const {
-      listDataSource,
       style,
     } = this.props
-    console.log('final filter!', this.state.filter)
+    const { data } = this.state
+
     return (
       <FlatList
-        data={listDataSource}
+        data={data}
         renderItem={this._renderItem}
         ListHeaderComponent={this._renderHeader}
         style={[styles.list, style]}

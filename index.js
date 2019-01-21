@@ -43,12 +43,19 @@ export default class SmartFilter extends Component {
   }
 
   _emitFilter = (filter) => {
-    const { setFilterTypeDefinedStatus } = this.props
+    const { setFilterTypeDefinedStatus, getResults } = this.props
     console.log('my filter is', filter)
     this.setState({
       tags: [...this.state.tags, filter],
-    }, () => this._setFieldFocus(false))
-    setFilterTypeDefinedStatus(false)
+    }, () => {
+      const results = this.state.tags.reduce((obj, item) => {
+        obj[Object.keys(item)] = Object.values(item).toString()
+        return obj
+      }, {})
+      getResults(results)
+      this._setFieldFocus(false)
+      setFilterTypeDefinedStatus(false)
+    })
   }
 
   // WIP!
@@ -63,7 +70,6 @@ export default class SmartFilter extends Component {
     }
 
     const results = this.props.listDataSource.filter(listItem => listItem[searchKey].toLowerCase().indexOf(search.toLowerCase()) > -1)
-    console.log('results - ', results)
     this.setState({ listItems: results })
     this.onTextChangeCB(search)
   }
@@ -74,7 +80,6 @@ export default class SmartFilter extends Component {
       listDataSource,
       setFilterTypeDefinedStatus,
       isFilterTypeDefined,
-      searchKey,
     } = this.props
 
     if (focus) {
@@ -84,7 +89,6 @@ export default class SmartFilter extends Component {
           listDataSource={listDataSource}
           setFilterTypeDefinedStatus={setFilterTypeDefinedStatus}
           isFilterTypeDefined={isFilterTypeDefined}
-          searchKey={searchKey}
         />
       )
     }
@@ -98,7 +102,9 @@ export default class SmartFilter extends Component {
       textInputStyle,
     } = this.props
 
-    const tags = this.state.tags.map(tag => (<Chip type={tag.type} value={tag.keyword} />))
+    const tags = this.state.tags.map(tag => (<Chip tag={tag} />))
+
+    console.log('tags', this.state.tags)
 
     return (
       <View style={[styles.container, containerStyle]}>
