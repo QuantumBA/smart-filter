@@ -15,6 +15,7 @@ export default class SmartFilter extends Component {
     text: '',
     tags: [],
     focus: false,
+    isFilterTypeDefined: false,
   }
 
   // componentWillMount() {
@@ -38,24 +39,17 @@ export default class SmartFilter extends Component {
     }
   }
 
+  _setFilterTypeDefinedStatus = (isDefined) => {
+    this.setState({ isFilterTypeDefined: isDefined })
+  }
+
   _setFieldFocus = (focus) => {
     this.setState({ focus })
   }
 
-  _emitFilter = (filter) => {
-    const { setFilterTypeDefinedStatus, getResults } = this.props
-    console.log('my filter is', filter)
-    this.setState({
-      tags: [...this.state.tags, filter],
-    }, () => {
-      const results = this.state.tags.reduce((obj, item) => {
-        obj[Object.keys(item)] = Object.values(item).toString()
-        return obj
-      }, {})
-      getResults(results)
-      this._setFieldFocus(false)
-      setFilterTypeDefinedStatus(false)
-    })
+  _resetFilter = () => {
+    this._setFieldFocus(false)
+    this._setFilterTypeDefinedStatus(false)
   }
 
   // WIP!
@@ -75,20 +69,22 @@ export default class SmartFilter extends Component {
   }
 
   renderList() {
-    const { focus } = this.state
+    const { focus, isFilterTypeDefined } = this.state
     const {
-      listDataSource,
-      setFilterTypeDefinedStatus,
-      isFilterTypeDefined,
+      dataList,
+      filtersList,
+      onChange,
     } = this.props
 
     if (focus) {
       return (
         <List
-          emitFilter={this._emitFilter}
-          listDataSource={listDataSource}
-          setFilterTypeDefinedStatus={setFilterTypeDefinedStatus}
+          dataList={dataList}
+          filtersList={filtersList}
+          resetFilter={this._resetFilter}
           isFilterTypeDefined={isFilterTypeDefined}
+          onChange={onChange}
+          setFilterTypeDefinedStatus={this._setFilterTypeDefinedStatus}
         />
       )
     }
@@ -98,13 +94,12 @@ export default class SmartFilter extends Component {
   render() {
     const {
       containerStyle,
+      filtersList,
       iconStyle,
       textInputStyle,
     } = this.props
 
-    const tags = this.state.tags.map(tag => (<Chip tag={tag} />))
-
-    console.log('tags', this.state.tags)
+    const tags = Object.keys(filtersList).map(filter => (<Chip keyText={filter} valueText={filtersList[filter]} />))
 
     return (
       <View style={[styles.container, containerStyle]}>

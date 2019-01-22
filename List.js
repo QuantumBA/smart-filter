@@ -12,43 +12,47 @@ export default class List extends Component {
   state = {
     isMouseHovering: false,
     highlightedItem: '',
-    filter: {},
+    filterKey: '',
     data: [],
   }
 
   componentWillMount() {
-    const { listDataSource } = this.props
-    this.setState({ data: Object.keys(listDataSource) })
+    const { dataList } = this.props
+    this.setState({ data: Object.keys(dataList) })
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('willRecProps', this.props.listDataSource, this.state.filter.type)
     if (nextProps.isFilterTypeDefined && nextProps.isFilterTypeDefined !== this.props.isFilterTypeDefined) {
-      this.setState({ data: this.props.listDataSource[this.state.filter.type] })
+      this.setState({ data: this.props.dataList[this.state.filterKey] })
     }
   }
 
   _onPress = (currentItem) => {
     const {
-      emitFilter,
+      filtersList,
       isFilterTypeDefined,
+      onChange,
+      resetFilter,
       setFilterTypeDefinedStatus,
     } = this.props
 
+    const { filterKey } = this.state
+
     if (isFilterTypeDefined) {
-      console.log('filtro ya definido!')
+      if (!filtersList[filterKey]) {
+        const valuesList = []
+        valuesList.push(currentItem)
+        filtersList[filterKey] = valuesList
+      } else if (filtersList[filterKey].length > 0) {
+        filtersList[filterKey].push(currentItem)
+      }
       this.setState({
-        filter: { ...this.state.filter, keyword: currentItem },
-      }, () => {
-        const filter = { [this.state.filter.type]: this.state.filter.keyword }
-        console.log('emitFilter!', filter)
-        emitFilter(filter)
-      })
+        filterKey: '',
+      }, () => { onChange(filtersList); resetFilter() })
     } else {
-      console.log('definiendo tipo de filtro...')
       this.setState(
-        { filter: { ...this.state.filter, type: currentItem } },
-        () => setFilterTypeDefinedStatus(true),
+        { filterKey: currentItem },
+        () => { setFilterTypeDefinedStatus(true) },
       )
     }
 
