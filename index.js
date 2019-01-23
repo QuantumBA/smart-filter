@@ -13,7 +13,6 @@ export default class SmartFilter extends Component {
 
   state = {
     text: '',
-    tags: [],
     focus: false,
     isFilterTypeDefined: false,
   }
@@ -53,19 +52,26 @@ export default class SmartFilter extends Component {
   }
 
   // WIP!
-  filterList(search) {
-    const { text } = this.state
-    const { searchKey } = this.props
+  // filterList(search) {
+  //   const { text } = this.state
+  //   const { dataList } = this.props
+  //
+  //   if (text.slice(0, -1) === search) {
+  //     this.deleting = true
+  //   } else {
+  //     this.deleting = false
+  //   }
+  //
+  //   const results = dataList.filter(listItem => listItem[searchKey].toLowerCase().indexOf(search.toLowerCase()) > -1)
+  //   this.setState({ listItems: results })
+  //   this.onTextChangeCB(search)
+  // }
 
-    if (text.slice(0, -1) === search) {
-      this.deleting = true
-    } else {
-      this.deleting = false
-    }
-
-    const results = this.props.listDataSource.filter(listItem => listItem[searchKey].toLowerCase().indexOf(search.toLowerCase()) > -1)
-    this.setState({ listItems: results })
-    this.onTextChangeCB(search)
+  _removeFilter = (key, value) => {
+    const { filtersList, onChange } = this.props
+    const newFiltersList = filtersList[key].filter(filter => filter !== value)
+    filtersList[key] = newFiltersList
+    onChange(filtersList)
   }
 
   renderList() {
@@ -91,15 +97,25 @@ export default class SmartFilter extends Component {
     return null
   }
 
+  renderChips() {
+    const { filtersList } = this.props
+    const chipsList = []
+    let value
+    Object.keys(filtersList).forEach((key) => {
+      value = filtersList[key]
+      chipsList.push(value.map(item => (<Chip onRemove={this._removeFilter} keyText={key} valueText={item} />)))
+    })
+
+    return chipsList
+  }
+
   render() {
     const {
       containerStyle,
-      filtersList,
+      // filtersList,
       iconStyle,
       textInputStyle,
     } = this.props
-
-    const tags = Object.keys(filtersList).map(filter => (<Chip keyText={filter} valueText={filtersList[filter]} />))
 
     return (
       <View style={[styles.container, containerStyle]}>
@@ -109,7 +125,7 @@ export default class SmartFilter extends Component {
           size={19}
           style={[styles.icon, iconStyle]}
         />
-        {tags}
+        {this.renderChips()}
         <View style={styles.inputWrapper}>
           <TextInput
             style={[styles.input, textInputStyle]}
@@ -117,14 +133,6 @@ export default class SmartFilter extends Component {
             onChangeText={(text) => {
               // this.filterList(text)
               this.setState({ text })
-              const lastTyped = text.charAt(text.length - 1)
-              const parseWhen = [',', ' ', ';']
-              if (parseWhen.indexOf(lastTyped) > -1) {
-                this.setState({
-                  tags: [...this.state.tags, this.state.text],
-                  text: '',
-                })
-              }
             }
             }
             onFocus={() => this._setFieldFocus(true)}

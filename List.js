@@ -43,7 +43,7 @@ export default class List extends Component {
         const valuesList = []
         valuesList.push(currentItem)
         filtersList[filterKey] = valuesList
-      } else if (filtersList[filterKey].length > 0) {
+      } else if (filtersList[filterKey].length >= 0 && !filtersList[filterKey].includes(currentItem)) {
         filtersList[filterKey].push(currentItem)
       }
       this.setState({

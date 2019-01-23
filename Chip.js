@@ -13,7 +13,7 @@ import styles               from './styles'
 export default class Chip extends Component {
 
   render() {
-    const { keyText, valueText } = this.props
+    const { keyText, valueText, onRemove } = this.props
     return (
       <View style={styles.chip}>
         <Text style={styles.chipText} numberOfLines={1}>
@@ -22,7 +22,7 @@ export default class Chip extends Component {
         </Text>
         <TouchableOpacity
           style={styles.deleteIcon}
-          onPress={() => console.log('borrame!')}
+          onPress={() => onRemove(keyText, valueText)}
         >
           <Icon
             size={13}
