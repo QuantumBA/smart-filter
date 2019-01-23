@@ -1,7 +1,7 @@
 {
   "name": "smart-filter",
   "description": "Dynamic search bar that filters an object of lists",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "index.js",
   "dependencies": {
     "react": "16.4.2",
@@ -12,5 +12,9 @@
     "type": "git",
     "url": "https://github.com/QuantumBA/smart-filter"
   },
-  "author": "HenryTux"
+  "author": "HenryTux",
+  "contributors": [
+    "Adrián Insausti",
+    "Xiang Chen"
+  ]
 }

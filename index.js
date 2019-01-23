@@ -15,12 +15,8 @@ export default class SmartFilter extends Component {
     text: '',
     focus: false,
     isFilterTypeDefined: false,
+    filterKey: '',
   }
-
-  // componentWillMount() {
-  //   const { listDataSource } = this.props
-  //   this.setState({ listItems: listDataSource })
-  // }
 
   onTextChangeCB(searchedText) {
     if (this.props.onTextChange && typeof this.props.onTextChange === 'function') {
@@ -30,16 +26,21 @@ export default class SmartFilter extends Component {
     }
   }
 
-  onKeyPress(e) {
-    if (e.nativeEvent.key === 'Backspace') {
-      this.deleting = true
-    } else {
-      this.deleting = false
-    }
+  getDataList() {
+    const { isFilterTypeDefined, filterKey } = this.state
+    const { data } = this.props
+
+    const tempData = isFilterTypeDefined ? data[filterKey] : Object.keys(data)
+
+    return tempData
+  }
+
+  _setFilterKey = (filterKey, nextAction) => {
+    this.setState({ filterKey }, nextAction)
   }
 
   _setFilterTypeDefinedStatus = (isDefined) => {
-    this.setState({ isFilterTypeDefined: isDefined })
+    this.setState({ isFilterTypeDefined: isDefined, text: '' })
   }
 
   _setFieldFocus = (focus) => {
@@ -52,20 +53,15 @@ export default class SmartFilter extends Component {
   }
 
   // WIP!
-  // filterList(search) {
-  //   const { text } = this.state
-  //   const { dataList } = this.props
-  //
-  //   if (text.slice(0, -1) === search) {
-  //     this.deleting = true
-  //   } else {
-  //     this.deleting = false
-  //   }
-  //
-  //   const results = dataList.filter(listItem => listItem[searchKey].toLowerCase().indexOf(search.toLowerCase()) > -1)
-  //   this.setState({ listItems: results })
-  //   this.onTextChangeCB(search)
-  // }
+  filterList(search) {
+    const { isFilterTypeDefined, filterKey, text } = this.state
+    const { data } = this.props
+
+    const dataList = isFilterTypeDefined && filterKey ? data[filterKey] : Object.keys(data)
+
+    return text ? dataList.filter(listItem => listItem.indexOf(search) > -1) : dataList
+
+  }
 
   _removeFilter = (key, value) => {
     const { filtersList, onChange } = this.props
@@ -75,22 +71,25 @@ export default class SmartFilter extends Component {
   }
 
   renderList() {
-    const { focus, isFilterTypeDefined } = this.state
+    const { focus, isFilterTypeDefined, filterKey, text } = this.state
     const {
-      dataList,
       filtersList,
       onChange,
+      filterTypeListHeaderText,
     } = this.props
 
     if (focus) {
       return (
         <List
-          dataList={dataList}
+          dataList={this.filterList(text)}
+          filterKey={filterKey}
           filtersList={filtersList}
           resetFilter={this._resetFilter}
           isFilterTypeDefined={isFilterTypeDefined}
           onChange={onChange}
+          setFilterKey={this._setFilterKey}
           setFilterTypeDefinedStatus={this._setFilterTypeDefinedStatus}
+          filterTypeListHeaderText={filterTypeListHeaderText}
         />
       )
     }
@@ -114,6 +113,7 @@ export default class SmartFilter extends Component {
       containerStyle,
       // filtersList,
       iconStyle,
+      inputPlaceholder,
       textInputStyle,
     } = this.props
 
@@ -131,12 +131,12 @@ export default class SmartFilter extends Component {
             style={[styles.input, textInputStyle]}
             value={this.state.text}
             onChangeText={(text) => {
-              // this.filterList(text)
               this.setState({ text })
+              this.filterList(text)
             }
             }
             onFocus={() => this._setFieldFocus(true)}
-            placeholder="Añadir filtro"
+            placeholder={inputPlaceholder ? inputPlaceholder : 'Add filter'}
             outline="transparent"
           />
           {this.renderList()}

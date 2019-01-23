@@ -12,31 +12,18 @@ export default class List extends Component {
   state = {
     isMouseHovering: false,
     highlightedItem: '',
-    filterKey: '',
-    data: [],
-  }
-
-  componentWillMount() {
-    const { dataList } = this.props
-    this.setState({ data: Object.keys(dataList) })
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.isFilterTypeDefined && nextProps.isFilterTypeDefined !== this.props.isFilterTypeDefined) {
-      this.setState({ data: this.props.dataList[this.state.filterKey] })
-    }
   }
 
   _onPress = (currentItem) => {
     const {
+      filterKey,
       filtersList,
       isFilterTypeDefined,
       onChange,
       resetFilter,
+      setFilterKey,
       setFilterTypeDefinedStatus,
     } = this.props
-
-    const { filterKey } = this.state
 
     if (isFilterTypeDefined) {
       if (!filtersList[filterKey]) {
@@ -46,23 +33,18 @@ export default class List extends Component {
       } else if (filtersList[filterKey].length >= 0 && !filtersList[filterKey].includes(currentItem)) {
         filtersList[filterKey].push(currentItem)
       }
-      this.setState({
-        filterKey: '',
-      }, () => { onChange(filtersList); resetFilter() })
+      setFilterKey('', () => { onChange(filtersList); resetFilter() })
     } else {
-      this.setState(
-        { filterKey: currentItem },
-        () => { setFilterTypeDefinedStatus(true) },
-      )
+      setFilterKey(currentItem, () => { setFilterTypeDefinedStatus(true) })
     }
 
   }
 
   _renderHeader = () => {
-    const { isFilterTypeDefined } = this.props
+    const { isFilterTypeDefined, filterTypeListHeaderText } = this.props
     if (!isFilterTypeDefined) {
       return (
-        <Text style={styles.listHeaderText}>Filtrar por</Text>)
+        <Text style={styles.listHeaderText}>{filterTypeListHeaderText ? filterTypeListHeaderText : 'Filter by'}</Text>)
     }
     return null
   }
@@ -86,12 +68,12 @@ export default class List extends Component {
   render() {
     const {
       style,
+      dataList,
     } = this.props
-    const { data } = this.state
 
     return (
       <FlatList
-        data={data}
+        data={dataList}
         renderItem={this._renderItem}
         ListHeaderComponent={this._renderHeader}
         style={[styles.list, style]}
