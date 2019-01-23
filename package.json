@@ -6,11 +6,11 @@
   "dependencies": {
     "react": "16.4.2",
     "react-native": "^0.56.1",
-    "react-native-vector-icons": "^5.0.0",
+    "react-native-vector-icons": "^5.0.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/QuantumBA/smart-filter"
   },
-  "author": "HenryTux",
+  "author": "HenryTux"
 }
