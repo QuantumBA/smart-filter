@@ -55,12 +55,19 @@ export default class SmartFilter extends Component {
   // WIP!
   filterList(search) {
     const { isFilterTypeDefined, filterKey, text } = this.state
-    const { data } = this.props
+    const { data, filtersList } = this.props
 
-    const dataList = isFilterTypeDefined && filterKey ? data[filterKey] : Object.keys(data)
-
+    // Filter if all values have been selected
+    let dataList = Object.keys(data).filter(key => (
+      !filtersList[key] || data[key].length > filtersList[key].length
+    ))
+    // Remove selected values
+    if (isFilterTypeDefined && filterKey) {
+      const currentValues = filtersList[filterKey]
+      dataList = data[filterKey].filter(val =>
+        !currentValues || currentValues.indexOf(val) < 0)
+    }
     return text ? dataList.filter(listItem => listItem.indexOf(search) > -1) : dataList
-
   }
 
   _removeFilter = (key, value) => {
@@ -119,27 +126,31 @@ export default class SmartFilter extends Component {
 
     return (
       <View style={[styles.container, containerStyle]}>
-        <Icon
-          color="#919191"
-          name="search"
-          size={19}
-          style={[styles.icon, iconStyle]}
-        />
-        {this.renderChips()}
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={[styles.input, textInputStyle]}
-            value={this.state.text}
-            onChangeText={(text) => {
-              this.setState({ text })
-              this.filterList(text)
-            }
-            }
-            onFocus={() => this._setFieldFocus(true)}
-            placeholder={inputPlaceholder ? inputPlaceholder : 'Add filter'}
-            outline="transparent"
+        <View style={styles.iconWrapper}>
+          <Icon
+            color="#919191"
+            name="search"
+            size={19}
+            style={[styles.icon, iconStyle]}
           />
-          {this.renderList()}
+        </View>
+        <View style={styles.contentContainer}>
+          {this.renderChips()}
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={[styles.input, textInputStyle]}
+              value={this.state.text}
+              onChangeText={(text) => {
+                this.setState({ text })
+                this.filterList(text)
+              }
+              }
+              onFocus={() => this._setFieldFocus(true)}
+              placeholder={inputPlaceholder ? inputPlaceholder : 'Add filter'}
+              outline="transparent"
+            />
+            {this.renderList()}
+          </View>
         </View>
       </View>
     )

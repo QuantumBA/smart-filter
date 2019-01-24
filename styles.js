@@ -11,7 +11,15 @@ export default StyleSheet.create({
     backgroundColor: '#ffffff',
     marginBottom: 10,
     zIndex: 9999,
+  },
+  iconWrapper: { // ICON WRAPPER
+    height: '100%',
+  },
+  contentContainer: {
     flexWrap: 'wrap',
+    flexDirection: 'row',
+    flex: 1,
+    alignItems: 'center',
   },
   inputWrapper: { // INPUT AND LIST WRAPPER
     flex: 1,
@@ -19,7 +27,7 @@ export default StyleSheet.create({
   },
   input: { // TEXTINPUT
     outline: 'none',
-    marginHorizontal: 2,
+    margin: 2,
   },
   icon: { // SEARCH ICON ON THE LEFT
     marginHorizontal: 5,
@@ -30,7 +38,7 @@ export default StyleSheet.create({
     backgroundColor: '#ececec',
     paddingHorizontal: 5,
     paddingVertical: 4,
-    marginHorizontal: 2,
+    margin: 2,
     flexDirection: 'row',
     overflow: 'hidden',
     alignItems: 'center',
