@@ -1,5 +1,5 @@
 {
-  "name": "smart-filter",
+  "name": "react-native-smart-filter",
   "description": "Dynamic search bar that filters an object of lists",
   "version": "0.0.6",
   "main": "index.js",
@@ -8,13 +8,15 @@
     "react-native": "^0.56.1",
     "react-native-vector-icons": "^5.0.0"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/QuantumBA/smart-filter"
   },
-  "author": "HenryTux",
+  "author": "Foqum (http://www.foqum.io/)",
   "contributors": [
     "Adrián Insausti",
-    "Xiang Chen"
+    "Xiang Chen",
+    "HenryTux"
   ]
 }
