@@ -52,6 +52,16 @@ export default class SmartFilter extends Component {
     this._setFilterTypeDefinedStatus(false)
   }
 
+  filterByText = (item) => {
+    const { caseSensitive } = this.props
+    const { text } = this.state
+    if (caseSensitive) {
+      return item.includes(text)
+    } else {
+      return item.toLowerCase().includes(text.toLowerCase())
+    }
+  }
+
   // WIP!
   filterList(search) {
     const { isFilterTypeDefined, filterKey, text } = this.state
@@ -67,7 +77,7 @@ export default class SmartFilter extends Component {
       dataList = data[filterKey].filter(val =>
         !currentValues || currentValues.indexOf(val) < 0)
     }
-    return text ? dataList.filter(listItem => listItem.indexOf(search) > -1) : dataList
+    return text ? dataList.filter(this.filterByText) : dataList
   }
 
   _removeFilter = (key, value) => {

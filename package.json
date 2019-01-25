@@ -4,9 +4,11 @@
   "version": "0.0.6",
   "main": "index.js",
   "dependencies": {
-    "react": "16.4.2",
-    "react-native": "^0.56.1",
     "react-native-vector-icons": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": "16.4.2",
+    "react-native": "^0.56.1"
   },
   "license": "MIT",
   "repository": {
