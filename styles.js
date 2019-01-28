@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Platform } from 'react-native'
 
 export default StyleSheet.create({
   container: { // MAIN CONTAINER
@@ -26,7 +26,11 @@ export default StyleSheet.create({
     minWidth: 230,
   },
   input: { // TEXTINPUT
-    outline: 'none',
+    ...Platform.select({
+      web: {
+        outline: 'none',
+      },
+    }),
     margin: 2,
   },
   icon: { // SEARCH ICON ON THE LEFT
