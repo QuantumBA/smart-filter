@@ -1,7 +1,7 @@
 {
   "name": "react-native-smart-filter",
   "description": "Dynamic search bar that filters an object of lists",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "main": "index.js",
   "peerDependencies": {
     "prop-types": "^15.6.0",
