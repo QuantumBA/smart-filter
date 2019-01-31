@@ -135,33 +135,35 @@ export default class SmartFilter extends Component {
     } = this.props
 
     return (
-      <View style={[styles.container, containerStyle]}>
-        <View style={styles.iconWrapper}>
-          <Icon
-            color="#919191"
-            name="search"
-            size={19}
-            style={[styles.icon, iconStyle]}
-          />
-        </View>
-        <View style={styles.contentContainer}>
-          {this.renderChips()}
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={[styles.input, textInputStyle]}
-              value={this.state.text}
-              onChangeText={(text) => {
-                this.setState({ text })
-                this.filterList(text)
-              }
-              }
-              onFocus={() => this._setFieldFocus(true)}
-              placeholder={inputPlaceholder ? inputPlaceholder : 'Add filter'}
-              outline="transparent"
+      <View>
+        <View style={[styles.container, containerStyle]}>
+          <View style={styles.iconWrapper}>
+            <Icon
+              color="#919191"
+              name="search"
+              size={19}
+              style={[styles.icon, iconStyle]}
             />
-            {this.renderList()}
+          </View>
+          <View style={styles.contentContainer}>
+            {this.renderChips()}
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={[styles.input, textInputStyle]}
+                value={this.state.text}
+                onChangeText={(text) => {
+                  this.setState({ text })
+                  this.filterList(text)
+                }
+                }
+                onFocus={() => this._setFieldFocus(true)}
+                placeholder={inputPlaceholder ? inputPlaceholder : 'Add filter'}
+                outline="transparent"
+              />
+            </View>
           </View>
         </View>
+        {this.renderList()}
       </View>
     )
   }

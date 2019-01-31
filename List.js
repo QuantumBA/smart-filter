@@ -3,6 +3,7 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
+  View,
 }                           from 'react-native'
 
 import styles               from './styles'
@@ -69,6 +70,7 @@ export default class List extends Component {
     const {
       style,
       dataList,
+      contentContainerStyle,
     } = this.props
 
     return (
@@ -78,6 +80,7 @@ export default class List extends Component {
         ListHeaderComponent={this._renderHeader}
         style={[styles.list, style]}
         extraData={this.props}
+        contentContainerStyle={{ paddingBottom: 15 }}
       />
     )
   }

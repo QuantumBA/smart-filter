@@ -10,10 +10,11 @@ export default StyleSheet.create({
     minHeight: 29,
     backgroundColor: '#ffffff',
     marginBottom: 10,
-    zIndex: 9999,
   },
   iconWrapper: { // ICON WRAPPER
     height: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   contentContainer: {
     flexWrap: 'wrap',
@@ -21,7 +22,7 @@ export default StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
-  inputWrapper: { // INPUT AND LIST WRAPPER
+  inputWrapper: { // INPUT WRAPPER
     flex: 1,
     minWidth: 230,
   },
@@ -32,6 +33,7 @@ export default StyleSheet.create({
       },
     }),
     margin: 2,
+    paddingVertical: 0,
   },
   icon: { // SEARCH ICON ON THE LEFT
     marginHorizontal: 5,
@@ -65,12 +67,8 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   list: { // FLATLIST
-    maxWidth: 215,
-    maxHeight: 200,
-    position: 'absolute',
-    top: 20,
-    left: 0,
-    right: 0,
+    width: '100%',
+    maxHeight: 110,
     backgroundColor: '#444444',
     borderRadius: 4,
     paddingVertical: 5,
