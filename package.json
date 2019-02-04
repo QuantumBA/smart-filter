@@ -3,10 +3,25 @@
   "description": "Dynamic search bar that filters an object of lists",
   "version": "0.0.10",
   "main": "index.js",
+  "scripts": {
+    "modules": "rm -rf node_modules && npm install"
+  },
   "peerDependencies": {
     "prop-types": "^15.6.0",
     "react": "16.4.2",
     "react-native": "^0.56.1",
+    "react-native-vector-icons": "^5.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.18.0",
+    "eslint-plugin-react": "^7.6.1",
+    "babel-eslint": "^8.2.1",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-native": "^0.55.0",
     "react-native-vector-icons": "^5.0.0"
   },
   "license": "MIT",

@@ -19,9 +19,10 @@ export default class SmartFilter extends Component {
   }
 
   onTextChangeCB(searchedText) {
-    if (this.props.onTextChange && typeof this.props.onTextChange === 'function') {
+    const { onTextChange } = this.props
+    if (onTextChange && typeof onTextChange === 'function') {
       setTimeout(() => {
-        this.props.onTextChange(searchedText)
+        onTextChange(searchedText)
       }, 0)
     }
   }
@@ -33,6 +34,22 @@ export default class SmartFilter extends Component {
     const tempData = isFilterTypeDefined ? data[filterKey] : Object.keys(data)
 
     return tempData
+  }
+
+  getFilteredList() {
+    const { isFilterTypeDefined, filterKey, text } = this.state
+    const { data, filtersList } = this.props
+
+    // Remove if all values have been selected
+    let dataList = Object.keys(data).filter(key => (
+      !filtersList[key] || data[key].length > filtersList[key].length
+    ))
+    // Remove selected values
+    if (isFilterTypeDefined && filterKey) {
+      const currentValues = filtersList[filterKey]
+      dataList = data[filterKey].filter(val => !currentValues || currentValues.indexOf(val) < 0)
+    }
+    return text ? dataList.filter(this.filterByText) : dataList
   }
 
   _setFilterKey = (filterKey, nextAction) => {
@@ -55,29 +72,10 @@ export default class SmartFilter extends Component {
   filterByText = (item) => {
     const { caseSensitive } = this.props
     const { text } = this.state
-    if (caseSensitive) {
-      return item.includes(text)
-    } else {
-      return item.toLowerCase().includes(text.toLowerCase())
-    }
-  }
 
-  // WIP!
-  filterList(search) {
-    const { isFilterTypeDefined, filterKey, text } = this.state
-    const { data, filtersList } = this.props
+    if (caseSensitive) return item.includes(text)
 
-    // Filter if all values have been selected
-    let dataList = Object.keys(data).filter(key => (
-      !filtersList[key] || data[key].length > filtersList[key].length
-    ))
-    // Remove selected values
-    if (isFilterTypeDefined && filterKey) {
-      const currentValues = filtersList[filterKey]
-      dataList = data[filterKey].filter(val =>
-        !currentValues || currentValues.indexOf(val) < 0)
-    }
-    return text ? dataList.filter(this.filterByText) : dataList
+    return item.toLowerCase().includes(text.toLowerCase())
   }
 
   _removeFilter = (key, value) => {
@@ -88,17 +86,17 @@ export default class SmartFilter extends Component {
   }
 
   renderList() {
-    const { focus, isFilterTypeDefined, filterKey, text } = this.state
+    const { focus, isFilterTypeDefined, filterKey } = this.state
     const {
       filtersList,
       onChange,
       filterTypeListHeaderText,
     } = this.props
 
-    if (focus) {
+    if (focus || isFilterTypeDefined) {
       return (
         <List
-          dataList={this.filterList(text)}
+          dataList={this.getFilteredList()}
           filterKey={filterKey}
           filtersList={filtersList}
           resetFilter={this._resetFilter}
@@ -116,10 +114,15 @@ export default class SmartFilter extends Component {
   renderChips() {
     const { filtersList } = this.props
     const chipsList = []
-    let value
     Object.keys(filtersList).forEach((key) => {
-      value = filtersList[key]
-      chipsList.push(value.map(item => (<Chip onRemove={this._removeFilter} keyText={key} valueText={item} />)))
+      const values = filtersList[key]
+      chipsList.push(values.map(val => (
+        <Chip
+          onRemove={this._removeFilter}
+          keyText={key}
+          valueText={val}
+        />
+      )))
     })
 
     return chipsList
@@ -128,14 +131,14 @@ export default class SmartFilter extends Component {
   render() {
     const {
       containerStyle,
-      // filtersList,
       iconStyle,
       inputPlaceholder,
       textInputStyle,
     } = this.props
+    const { text } = this.state
 
     return (
-      <View>
+      <View onBlur={() => this.setState({ focus: false })}>
         <View style={[styles.container, containerStyle]}>
           <View style={styles.iconWrapper}>
             <Icon
@@ -150,12 +153,8 @@ export default class SmartFilter extends Component {
             <View style={styles.inputWrapper}>
               <TextInput
                 style={[styles.input, textInputStyle]}
-                value={this.state.text}
-                onChangeText={(text) => {
-                  this.setState({ text })
-                  this.filterList(text)
-                }
-                }
+                value={text}
+                onChangeText={text => this.setState({ text })}
                 onFocus={() => this._setFieldFocus(true)}
                 placeholder={inputPlaceholder ? inputPlaceholder : 'Add filter'}
                 outline="transparent"

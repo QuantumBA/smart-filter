@@ -3,7 +3,6 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
-  View,
 }                           from 'react-native'
 
 import styles               from './styles'
@@ -51,26 +50,40 @@ export default class List extends Component {
   }
 
 
-  _renderItem = ({ ...listItem }) => (
-    <TouchableOpacity
-      onPress={() => this._onPress(listItem.item)}
-      style={[styles.listRowContainer, this.props.listRowStyle, this.state.highlightedItem === listItem.item && this.state.isMouseHovering && styles.listRowContainerHover]}
-      onMouseEnter={() => { this.setState({ isMouseHovering: true, highlightedItem: listItem.item }) }}
-      onMouseLeave={() => this.setState({ isMouseHovering: false, highlightedItem: '' })}
-    >
-      <Text
-        style={[styles.listRowText, this.props.listRowTextStyle, this.state.highlightedItem === listItem.item && this.state.isMouseHovering && styles.listRowTextHover]}
+  _renderItem = ({ ...listItem }) => {
+    const { listRowStyle, listRowTextStyle } = this.props
+    const { highlightedItem, isMouseHovering } = this.state
+    const { item } = listItem
+    return (
+      <TouchableOpacity
+        onPress={() => this._onPress(item)}
+        style={[
+          styles.listRowContainer,
+          listRowStyle,
+          highlightedItem === item && isMouseHovering && styles.listRowContainerHover,
+        ]}
+        onMouseEnter={() => this.setState({ isMouseHovering: true, highlightedItem: item })}
+        onMouseLeave={() => this.setState({ isMouseHovering: false, highlightedItem: '' })}
       >
-        { listItem && listItem.item ? listItem.item : '<empty>'}
-      </Text>
-    </TouchableOpacity>
-  )
+        <Text
+          style={[
+            styles.listRowText,
+            listRowTextStyle,
+            highlightedItem === item
+            && isMouseHovering
+            && styles.listRowTextHover,
+          ]}
+        >
+          { listItem && item ? item : '<empty>'}
+        </Text>
+      </TouchableOpacity>
+    )
+  }
 
   render() {
     const {
       style,
       dataList,
-      contentContainerStyle,
     } = this.props
 
     return (
