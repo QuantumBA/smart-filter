@@ -80,7 +80,7 @@ export default class SmartFilter extends Component {
       filterTypeListHeaderText,
     } = this.props
 
-    if (focus || filterKey) {
+    if (focus) {
       return (
         <List
           dataList={this.getFilteredList()}
@@ -88,7 +88,10 @@ export default class SmartFilter extends Component {
           filtersList={filtersList}
           resetFilter={this._resetFilter}
           onChange={onChange}
-          setFilterKey={filterKey => this.setState({ filterKey, text: '' })}
+          setFilterKey={(filterKey) => {
+            this.setState({ filterKey, text: '', focus: true })
+            this.textInput.focus()
+          }}
           filterTypeListHeaderText={filterTypeListHeaderText}
         />
       )
@@ -123,7 +126,7 @@ export default class SmartFilter extends Component {
     const { text } = this.state
 
     return (
-      <View onBlur={() => this.setState({ focus: false })}>
+      <View>
         <View style={[styles.container, containerStyle]}>
           <View style={styles.iconWrapper}>
             <Icon
@@ -137,6 +140,8 @@ export default class SmartFilter extends Component {
             {this.renderChips()}
             <View style={styles.inputWrapper}>
               <TextInput
+                onBlur={this._resetFilter}
+                ref={(input) => { this.textInput = input }}
                 style={[styles.input, textInputStyle]}
                 value={text}
                 onChangeText={text => this.setState({ text })}
