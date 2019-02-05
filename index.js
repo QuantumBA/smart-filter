@@ -20,9 +20,7 @@ export default class SmartFilter extends Component {
   onTextChangeCB(searchedText) {
     const { onTextChange } = this.props
     if (onTextChange && typeof onTextChange === 'function') {
-      setTimeout(() => {
-        onTextChange(searchedText)
-      }, 0)
+      setTimeout(() => onTextChange(searchedText), 0)
     }
   }
 
@@ -72,6 +70,30 @@ export default class SmartFilter extends Component {
     onChange(filtersList)
   }
 
+  _handleEnterKeyPress = () => {
+    const { filtersList, onChange } = this.props
+    const { filterKey } = this.state
+    const list = this.getFilteredList()
+    if (!list.length) return
+
+    if (!filterKey) {
+      // afterOnblur
+      setTimeout(() => this.setFilterKey(list[0]), 0)
+    } else {
+      if (!Array.isArray(filtersList[filterKey])) {
+        filtersList[filterKey] = [list[0]]
+      } else {
+        filtersList[filterKey].push(list[0])
+      }
+      onChange(filtersList)
+    }
+  }
+
+  setFilterKey = (filterKey) => {
+    this.setState({ filterKey, text: '', focus: true })
+    this.textInput.focus()
+  }
+
   renderList() {
     const { focus, filterKey } = this.state
     const {
@@ -88,10 +110,7 @@ export default class SmartFilter extends Component {
           filtersList={filtersList}
           resetFilter={this._resetFilter}
           onChange={onChange}
-          setFilterKey={(filterKey) => {
-            this.setState({ filterKey, text: '', focus: true })
-            this.textInput.focus()
-          }}
+          setFilterKey={this.setFilterKey}
           filterTypeListHeaderText={filterTypeListHeaderText}
         />
       )
@@ -144,6 +163,7 @@ export default class SmartFilter extends Component {
                 ref={(input) => { this.textInput = input }}
                 style={[styles.input, textInputStyle]}
                 value={text}
+                onSubmitEditing={this._handleEnterKeyPress}
                 onChangeText={text => this.setState({ text })}
                 onFocus={() => this.setState({ focus: true })}
                 placeholder={inputPlaceholder || 'Add filter'}
