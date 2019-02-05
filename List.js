@@ -18,33 +18,35 @@ export default class List extends Component {
     const {
       filterKey,
       filtersList,
-      isFilterTypeDefined,
       onChange,
       resetFilter,
       setFilterKey,
-      setFilterTypeDefinedStatus,
     } = this.props
 
-    if (isFilterTypeDefined) {
-      if (!filtersList[filterKey]) {
-        const valuesList = []
-        valuesList.push(currentItem)
-        filtersList[filterKey] = valuesList
-      } else if (filtersList[filterKey].length >= 0 && !filtersList[filterKey].includes(currentItem)) {
+    // selecting second element
+    if (filterKey) {
+      if (!Array.isArray(filtersList[filterKey])) {
+        filtersList[filterKey] = [currentItem]
+      } else if (!filtersList[filterKey].includes(currentItem)) {
         filtersList[filterKey].push(currentItem)
       }
-      setFilterKey('', () => { onChange(filtersList); resetFilter() })
+      onChange(filtersList)
+      resetFilter()
     } else {
-      setFilterKey(currentItem, () => { setFilterTypeDefinedStatus(true) })
+      // selecting first element
+      setFilterKey(currentItem)
     }
 
   }
 
   _renderHeader = () => {
-    const { isFilterTypeDefined, filterTypeListHeaderText } = this.props
-    if (!isFilterTypeDefined) {
+    const { filterKey, filterTypeListHeaderText } = this.props
+    if (!filterKey) {
       return (
-        <Text style={styles.listHeaderText}>{filterTypeListHeaderText ? filterTypeListHeaderText : 'Filter by'}</Text>)
+        <Text style={styles.listHeaderText}>
+          {filterTypeListHeaderText || 'Filter by'}
+        </Text>
+      )
     }
     return null
   }

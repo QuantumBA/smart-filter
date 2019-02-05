@@ -14,8 +14,7 @@ export default class SmartFilter extends Component {
   state = {
     text: '',
     focus: false,
-    isFilterTypeDefined: false,
-    filterKey: '',
+    filterKey: undefined,
   }
 
   onTextChangeCB(searchedText) {
@@ -28,16 +27,16 @@ export default class SmartFilter extends Component {
   }
 
   getDataList() {
-    const { isFilterTypeDefined, filterKey } = this.state
     const { data } = this.props
+    const { filterKey } = this.state
 
-    const tempData = isFilterTypeDefined ? data[filterKey] : Object.keys(data)
+    const tempData = filterKey ? data[filterKey] : Object.keys(data)
 
     return tempData
   }
 
   getFilteredList() {
-    const { isFilterTypeDefined, filterKey, text } = this.state
+    const { filterKey, text } = this.state
     const { data, filtersList } = this.props
 
     // Remove if all values have been selected
@@ -45,28 +44,16 @@ export default class SmartFilter extends Component {
       !filtersList[key] || data[key].length > filtersList[key].length
     ))
     // Remove selected values
-    if (isFilterTypeDefined && filterKey) {
+    if (filterKey) {
       const currentValues = filtersList[filterKey]
-      dataList = data[filterKey].filter(val => !currentValues || currentValues.indexOf(val) < 0)
+      if (!currentValues) dataList = data[filterKey]
+      else dataList = data[filterKey].filter(val => !currentValues.includes(val))
     }
     return text ? dataList.filter(this.filterByText) : dataList
   }
 
-  _setFilterKey = (filterKey, nextAction) => {
-    this.setState({ filterKey }, nextAction)
-  }
-
-  _setFilterTypeDefinedStatus = (isDefined) => {
-    this.setState({ isFilterTypeDefined: isDefined, text: '' })
-  }
-
-  _setFieldFocus = (focus) => {
-    this.setState({ focus })
-  }
-
   _resetFilter = () => {
-    this._setFieldFocus(false)
-    this._setFilterTypeDefinedStatus(false)
+    this.setState({ text: '', focus: false, filterKey: undefined })
   }
 
   filterByText = (item) => {
@@ -86,24 +73,22 @@ export default class SmartFilter extends Component {
   }
 
   renderList() {
-    const { focus, isFilterTypeDefined, filterKey } = this.state
+    const { focus, filterKey } = this.state
     const {
       filtersList,
       onChange,
       filterTypeListHeaderText,
     } = this.props
 
-    if (focus || isFilterTypeDefined) {
+    if (focus || filterKey) {
       return (
         <List
           dataList={this.getFilteredList()}
           filterKey={filterKey}
           filtersList={filtersList}
           resetFilter={this._resetFilter}
-          isFilterTypeDefined={isFilterTypeDefined}
           onChange={onChange}
-          setFilterKey={this._setFilterKey}
-          setFilterTypeDefinedStatus={this._setFilterTypeDefinedStatus}
+          setFilterKey={filterKey => this.setState({ filterKey, text: '' })}
           filterTypeListHeaderText={filterTypeListHeaderText}
         />
       )
@@ -155,8 +140,8 @@ export default class SmartFilter extends Component {
                 style={[styles.input, textInputStyle]}
                 value={text}
                 onChangeText={text => this.setState({ text })}
-                onFocus={() => this._setFieldFocus(true)}
-                placeholder={inputPlaceholder ? inputPlaceholder : 'Add filter'}
+                onFocus={() => this.setState({ focus: true })}
+                placeholder={inputPlaceholder || 'Add filter'}
                 outline="transparent"
               />
             </View>
