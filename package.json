@@ -1,7 +1,7 @@
 {
   "name": "react-native-smart-filter",
   "description": "Dynamic search bar that filters an object of lists",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "main": "index.js",
   "scripts": {
     "modules": "rm -rf node_modules && npm install"
