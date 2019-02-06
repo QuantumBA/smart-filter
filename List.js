@@ -41,14 +41,11 @@ export default class List extends Component {
 
   _renderHeader = () => {
     const { filterKey, filterTypeListHeaderText } = this.props
-    if (!filterKey) {
-      return (
-        <Text style={styles.listHeaderText}>
-          {filterTypeListHeaderText || 'Filter by'}
-        </Text>
-      )
-    }
-    return null
+    return (
+      <Text style={styles.listHeaderText}>
+        {filterKey || filterTypeListHeaderText || 'Filter by'}
+      </Text>
+    )
   }
 
 
@@ -101,3 +98,4 @@ export default class List extends Component {
   }
 
 }
+
