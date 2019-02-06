@@ -110,7 +110,7 @@ export default class SmartFilter extends Component {
           filtersList={filtersList}
           resetFilter={this._resetFilter}
           onChange={onChange}
-          setFilterKey={this.setFilterKey}
+          setFilterKey={(key) => setTimeout(() => this.setFilterKey(key), 0)}
           filterTypeListHeaderText={filterTypeListHeaderText}
         />
       )
@@ -178,3 +178,4 @@ export default class SmartFilter extends Component {
   }
 
 }
+
